@@ -1,0 +1,27 @@
+
+$styleRun['fontid'] -->                                 <fi
+                                                            $fontid
+                                                            _TABCHAR
+                                                            $fontpostscriptname
+                                                            _TABCHAR
+                                                            $fontfamilyname
+                                                            _TABCHAR
+                                                            fontfamilydisplayname
+                                                            _TABCHAR
+                                                            fontfullname
+                                                        >
+
+$styleRun['fontpostscriptname']
+$styleRun['fontfamilyname']
+$styleRun['fontfamilydisplayname']
+$styleRun['fontfamilyfullname']
+
+$styleRun['size']  -->                                  <ts
+                                                            $size
+                                                        >
+
+$styleRun['textfillcolour'] -->                         <tc
+                                                            $textfillcolour
+                                                        >
+
+$styleRun['underline'] -->                              <

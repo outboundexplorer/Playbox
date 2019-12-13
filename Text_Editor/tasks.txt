@@ -1,0 +1,9 @@
+
+1.  When underlining using the standard 'text-decoration: underline' style, this will inherit from the parent node.
+    This is an issue as this will cause the underline to be rendered in the wrong color.  How can we apply a color
+    and make sure that the color is applied underneath.
+
+2.  How can we undo a text-decoration: underline for just the current node
+
+3.  When highlighting text, what is the correct behaviour.  If we finish highlighting off-page, should the selection
+    still be valid or should we just cancel the selection?

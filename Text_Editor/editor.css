@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css?family=Indie+Flower&display=swap');
+
+@font-face {
+    font-family: 'SourceCodePro-Light';
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/topcoat/0.8.0/font/SourceCodePro-Light.otf') format('opentype');
+}
+
+
+
+#tgui-box {
+    writing-mode: horizontal-tb;
+    width: 600px;
+    height: 200px;
+    background-color: ghostwhite;
+    font-size: 36px;
+    font-family: 'SourceCodePro-Light';
+}
+
+.bolded {
+    color: red;
+    font-weight: 600;
+}
+
+.font {
+    font-family: 'Indie Flower', cursive;;
+}
+
+.bold {
+    font-weight: 600;
+
+}
+
+.red {
+    color: red;
+}
+
+.blue {
+    color: blue;
+}
+
+.underline {
+    text-decoration: underline;
+}
