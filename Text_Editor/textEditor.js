@@ -793,7 +793,8 @@
 
 
         function generateFlattenedDiv() {
-            var _textNodes = getTextNodesFromElement(editableDivNode);
+            forceNormalize();
+            var _textNodes = getTextNodesFromElement(textProps.editableDivNode);
             console.log('_textNodes', _textNodes);
             var _flattenReadyItems = getFlattenReadyItems(_textNodes);
             console.log('_flattenReadyItems', _flattenReadyItems);
@@ -825,40 +826,50 @@
             return _flattenReadyItems;
         }
 
-        function getTextNodesFromElement(node, nodes) {
-            if (!nodes || nodes.length === 0) {
-                nodes = [];
-            }
-
-            console.log('getTextNodesFromElement() -- node START', node);
-            console.log('getTextNodesFromElement() -- nodes START', nodes);
+        //<t>This</t>
+        //<span><t>is</t></span>
+        //<t>Good</t>
 
 
-            if (node.nodeType == Node.TEXT_NODE) {
-                // check that we are not the first node or the last node and that the node is not empty.
-                //if (!/^\s*$/.test(node.nodeValue)) {
-                nodes.push(node);
-                console.log('getTextNodesFromElement() -- node 1', node);
-                console.log('getTextNodesFromElement() -- nodes 1', nodes);
-                //}
+        function getTextNodesFromElement(node, isFlattening) {
 
-                // loop through each childNode of the current node looking for more childNodes (and so on...)
-            } else if (node.nodeType === 1 && node.nodeName === 'DIVBR') {
-                var newTextNode = document.createTextNode('[_RETURN]');
-                nodes.push(newTextNode);
-            } else {
-                console.log('getTextNodesFromElement() -- node 2', node);
-                console.log('getTextNodesFromElement() -- nodes 2', nodes);
-                if (node.nodeName === 'DIV' && node.id !== pElementID) {
+            var _nodes = [];
+
+            getRecursiveTextNodes(node,isFlattening);
+
+            return _nodes;
+
+            function getRecursiveTextNodes(node, isFlattening){
+                console.log('getRecursiveTextNodes() -- node START', node);
+
+                if (node.nodeType == Node.TEXT_NODE) {
+                    // check that we are not the first node or the last node and that the node is not empty.
+                    //if (!/^\s*$/.test(node.nodeValue)) {
+                    _nodes.push(node);
+                    console.log('getRecursiveTextNodes() -- node 1', node);
+                    //}
+
+                    // loop through each childNode of the current node looking for more childNodes (and so on...)
+                } else if (node.nodeType === 1 && isFlattening && node.nodeName === 'DIVBR') {
                     var newTextNode = document.createTextNode('[_RETURN]');
-                    nodes.push(newTextNode);
-                }
-                for (var i = 0, iLength = node.childNodes.length; i < iLength; i++) {
-                    //if()
-                    nodes = nodes.concat(getTextNodesFromElement(node.childNodes[i], nodes));
+                    _nodes.push(newTextNode);
+                } else {
+                    console.log('getRecursiveTextNodes() -- node 2', node);
+                    if (node.nodeName === 'DIV' && isFlattening && node.id !== pElementID) {
+                        var newTextNode = document.createTextNode('[_RETURN]');
+                        _nodes.push(newTextNode);
+                    }
+
+                    // nodes = ['<t>this</t>']
+                    // childNotes = ['<span><t>is</t></span>']
+                    for (var i = 0, iLength = node.childNodes.length; i < iLength; i++) {
+                        //if()
+                        getRecursiveTextNodes(node.childNodes[i], isFlattening);
+                    }
                 }
             }
-            return nodes;
+
+
         }
     }
 
