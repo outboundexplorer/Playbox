@@ -1,0 +1,32 @@
+1469722922705119 817348882555962 0 1 2 2 2 2
+<fi0*0400*ZAPFINO	Zapfino	Zapfino	Zapfino	Zapfino (TT)><fi0*0400*AMERICANTYPEWRITER-CONDENSED	AmericanTypewriter-Condensed	American Typewriter	American Typewriter	American Typewriter Condensed (TT)><fn0*0400*ZAPFINO><ts5200><tc9699460><rm3><rs-13214><pa1>4 <tc0>4 <tc65280><sx-38><sy43>4 <tc0><sx0><sy0>1 <u>4 <u>1 <ml>4 <ml>4 <tc65280><ba><bw143><bc255>2 <tc0><ba><bw10><bc0>1 <tc16742656>3 <tc0>1 <tw181><sy-31>5 <tw100><sy0>1 <ss1>3 <ss0>1 <ss2>5 <ss0>4 <tc-65536><ba><bw100>5 <tc0><ba><bw10>1 <fn0*0400*AMERICANTYPEWRITER-CONDENSED><ts7200><tc10839083><tw62><sc><cs2600>5 <fn0*0400*ZAPFINO><ts5200><cs0>2 <tc0><tw100><sc><ba><bw678>5 <bs4500>2 <bs0>1 <u><bc65535>6 <u><bc0>1 <tc255><u><bc16711680>4 <tc0><u><bc0>1 <tc16580352><bw10>13 <..>This is some text that is on the cover and wraps to three lines
+
+This is really bold this is light
+
+------------------------------------------------------------------------------------------------------------------------
+SECTION 1:
+---------
+1) 1469722922705119 -- text box width in large number (Int64)
+2) 817348882555962 -- text box height in large number (Int64)
+3) 0 -- text direction [0 = L2R (roman); 1 = R2L (roman backwards); 2 = T2BL2R;  3 = T2BR2L;  4 = B2TL2R; 5 = B2TR2L;  6 = T2BR2LCJK]
+4) 1 -- vertical alignment [0 = Top; 1 = Centre; 2 = Bottom; 3 = Justified]
+5) 2 -- top margin in large number (Int64)
+6) 2 -- left margin in large number (Int64)
+7) 2 -- bottom margin in large number (Int64)
+8) 2 -- right margin in large number (Int64)
+
+
+------------------------------------------------------------------------------------------------------------------------
+SECTION 2:
+---------
+
+<fi0*0400*ZAPFINO	Zapfino	Zapfino	Zapfino	Zapfino (TT)><fi0*0400*AMERICANTYPEWRITER-CONDENSED	AmericanTypewriter-Condensed	American Typewriter	American Typewriter	American Typewriter Condensed (TT)>
+
+1) fonttid [tab] postscript name [tab] font family name [tab] font family display name [tab] font full name
+
+
+------------------------------------------------------------------------------------------------------------------------
+SECTION 3:
+---------
+
+<tc> -- Text Fill color in Taopix color integer format

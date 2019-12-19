@@ -165,6 +165,9 @@ function handleActionButtonClick(e) {
         case 'directionToggle10':
             textGUI.generateFlattenedDiv();
             break;
+        case 'directionToggle11':
+            textGUI.populateHTML();
+            break;
 
 
     }

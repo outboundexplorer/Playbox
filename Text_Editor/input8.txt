@@ -1,0 +1,5 @@
+1111
+
+670753665268421 300000000000000 0 0 2 2 2 2 1 0
+<fi0*0400*ARIALUNICODEMS	ArialUnicodeMS	Arial Unicode MS	Arial Unicode MS	Arial Unicode MS><fn0*0400*ARIALUNICODEMS><bc00>this was the most simple thing
+<EOT>

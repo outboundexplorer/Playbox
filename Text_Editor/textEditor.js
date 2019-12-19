@@ -13,6 +13,13 @@
             fontUpright: false
         };
 
+        var tab = '&#9;';
+
+        var bassData = '1111\n' +
+            '\n' +
+            '670753665268421 300000000000000 0 0 2 2 2 2 1 0\n' +
+            '<fi0*0400*ARIALUNICODEMS' + tab + 'ArialUnicodeMS' + tab + 'Arial Unicode MS' + tab + 'Arial Unicode MS' + tab + 'Arial Unicode MS><fn0*0400*ARIALUNICODEMS><bc00>5 <bc0255>8 <bc00>1 <bc167116800>3 <bc00>1 <u>6 <u>6 <..>this was the most simple thing';
+
         /**
          * Define the CSS classes used to manage the applied styles
          * -- Note that the special 'removal' classes such as for "noUnderline" cannot be an extended version of the
@@ -24,7 +31,18 @@
             underline: 'tgui-y-underline',
             noUnderline: 'tgui-n-underline',
             red: 'tgui-red',
-            blue: 'tgui-blue'
+            blue: 'tgui-blue',
+            black: 'tgui-black'
+        };
+
+        var renderEngine = '1111\n\n';
+        var boxFormat = '670753665268421 300000000000000 0 0 2 2 2 2 1 0\n';
+
+        var FONTS = {
+            arial: {
+                fontid: '0*0400*ARIALUNICODEMS',
+                include: '0*0400*ARIALUNICODEMS\tArialUnicodeMS\tArial Unicode MS\tArial Unicode MS\tArial Unicode MS'
+            }
         };
 
         /**
@@ -34,6 +52,7 @@
         _this.applyColor = applyColor;
         _this.applyDecoration = applyDecoration;
         _this.generateFlattenedDiv = generateFlattenedDiv;
+        _this.populateHTML = populateHTML;
 
         initGUI();
 
@@ -435,12 +454,6 @@
             }
 
 
-
-
-
-
-
-
         }
 
         function getNodesForReformatting(ancestorNodes){
@@ -503,27 +516,6 @@
         }
 
 
-        /*function splitNodesAndReformat(style,nodes){
-            var parentTypeElements = getParentTypeElements(style,nodes);
-            var parentTextNodes = [];
-            for (var i = 0,iLength = parentTypeElements.length; i < iLength; i++){
-                var innerArray = getTextNodesFromElement(parentTypeElements[i]);
-                console.log('splitNodesAndReformat() -- inner parentTextNodes',parentTextNodes);
-                console.log('splitNodesAndReformat() -- getTextNodesFromElement(parentTypeElements[i])',getTextNodesFromElement(parentTypeElements[i]));
-                console.log('splitNodesAndReformat() -- innerArray',innerArray);
-                parentTextNodes = parentTextNodes.concat(innerArray);
-            }
-            console.log('splitNodesAndReformat() -- parentTextNodes',parentTextNodes);
-
-            var parentTextNodesForReformatting = getParentTextNodesOutsideSelection(parentTextNodes);
-            console.log('splitNodesAndReformat() -- parentTextNodesForReformatting',parentTextNodesForReformatting);
-
-            removeFormatFromNodes(style,parentTextNodes);
-            //removeSpanFromNodes(style,parentTextNodes);
-            // Rewrap the parent noddes that are outside selection
-            //wrapNodesWithFormat(style,parentTextNodesForReformatting);
-
-        }*/
 
         function getParentTextNodesOutsideSelection(parentTextNodes) {
             console.log('nodesForFormatting', nodesForFormatting);
@@ -590,21 +582,6 @@
 
         }
 
-        // function checkAncestorsByClass(node, style, truthy) {
-        //     if (!truthy) {
-        //         truthy = false;
-        //     }
-        //
-        //     if (node.parentElement && node.parentElement.id === pElementID) {
-        //         return truthy;
-        //     } else if (node.parentElement && node.parentElement.className && node.parentElement.className.indexOf(style) >= 0) {
-        //         truthy = true;
-        //         return checkAncestorsByClass(node.parentElement, style, truthy);
-        //     }
-        //
-        //     return truthy;
-        //
-        // }
 
         function areAllNodesFormatted(nodes, style) {
             for (var i = 0, iLength = nodes.length; i < iLength; i++) {
@@ -631,20 +608,6 @@
             }
         }
 
-        // function removeFormatFromElements(elements, style) {
-        //     for (var i = 0, iLength = elements.length; i < iLength; i++) {
-        //         parentElements.push(nodes[i].parentElement);
-        //         // var parentElement = getParentElementWithFormat(nodes[i], style);
-        //         // if (nodes[i].parentElement && parentElementIDs.indexOf(parentElement.id) < 0) {
-        //         //     parentElements.push(parentElement);
-        //             // parentElementIDs.push(parentElement.id);
-        //         // }
-        //     }
-        //     console.log('removeFormatFromNodes() -- parentElements', parentElements);
-        //
-        //     var parentElements = Tool$.getUniqueArray((parentElements));
-        //     removeFormatFromNodeParents(parentElements, style);
-        // }
 
         function removeFormatFromElements(parentElements, style) {
             for (var i = 0, iLength = parentElements.length; i < iLength; i++) {
@@ -652,64 +615,51 @@
             }
         }
 
-        // function getParentElementWithType(node, style) {
-        //     if (node.parentElement.className && node.parentElement.className.indexOf(style) >= 0) {
-        //         return node.parentElement;
-        //     } else if (node.parentElement && node.parentElement.id === pElementID) {
-        //         return false;
-        //     } else {
-        //         return getParentElementWithType(node.parentElement, style);
-        //     }
-        // }
+        function getTextNodesFromElement(node, isFlattening) {
 
+            var _nodes = [];
 
-// experimental
-        /*function removeSpanFromNodes(style,nodes){
-            var spans = [];
-            for (var i =0, iLength = nodes.length; i < iLength; i++){
-                spans.push(nodes[i].parentElement);
+            _getRecursiveTextNodes(node,isFlattening);
+
+            return _nodes;
+
+            function _getRecursiveTextNodes(node, isFlattening){
+                console.log('getRecursiveTextNodes() -- node START', node);
+
+                if (node.nodeType == Node.TEXT_NODE) {
+                    // check that we are not the first node or the last node and that the node is not empty.
+                    //if (!/^\s*$/.test(node.nodeValue)) {
+                    _nodes.push(node);
+                    console.log('getRecursiveTextNodes() -- node 1', node);
+                    //}
+
+                    // loop through each childNode of the current node looking for more childNodes (and so on...)
+                } else if (node.nodeType === 1 && isFlattening && node.nodeName === 'DIVBR') {
+                    var newTextNode = document.createTextNode('[_RETURN]');
+                    _nodes.push(newTextNode);
+                } else {
+                    console.log('getRecursiveTextNodes() -- node 2', node);
+                    if (node.nodeName === 'DIV' && isFlattening && node.id !== pElementID) {
+                        var newTextNode = document.createTextNode('[_RETURN]');
+                        _nodes.push(newTextNode);
+                    }
+
+                    for (var i = 0, iLength = node.childNodes.length; i < iLength; i++) {
+                        //if()
+                        _getRecursiveTextNodes(node.childNodes[i], isFlattening);
+                    }
+                }
             }
-        }*/
 
-        // function removeSpanFromNodes(nodes, style) {
-        //     console.log('removeSpanFromNodes() -- style', style);
-        //     console.log('removeSpanFromNodes() -- nodes', nodes);
-        //     var spans = [];
-        //     var spanIDs = [];
-        //     for (var i = 0, iLength = nodes.length; i < iLength; i++) {
-        //         if (spanIDs.indexOf(nodes[i].parentElement.id) >= 0) {
-        //             continue;
-        //         }
-        //         spans.push(nodes[i].parentElement);
-        //         spanIDs.push(nodes[i].parentElement.id);
-        //     }
-        //
-        //     console.log('removeSpanFromNodes() -- spans', spans[0].innerHTML);
-        //     /*for (var i = 0; i < elements.length; i++){
-        //        var textNode = document.createTextNode(elements[i].innerText);
-        //        console.log('textNode',textNode);
-        //        var targetParentNode = elements[i].parentNode;
-        //        targetParentNode.insertBefore(textNode,elements[i]);
-        //        targetParentNode.removeChild(elements[i]);
-        //
-        //         This is needed to make sure that adjacent #textNodes are joined into a single node
-        //        targetParentNode.normalize();
-        //      }*/
-        // }
+
+        }
+
+
 
         function wrapNodesWithFormat(nodes, style) {
             console.log('wrapNodesWIthFormat() -- style', style);
             console.log('wrapNodesWIthFormat() -- nodes', nodes);
             var nodeName = undefined;
-
-            //switch (style) {
-            //    case 'bold':
-            //        nodeName = 'B';
-            //        break;
-            //    case 'red':
-            //        nodeName = 'SPAN';
-            //        break;
-            //}
 
             for (var i = 0; i < nodes.length; i++) {
 
@@ -797,7 +747,9 @@
             var _textNodes = getTextNodesFromElement(textProps.editableDivNode);
             console.log('_textNodes', _textNodes);
             var _flattenReadyItems = getFlattenReadyItems(_textNodes);
+
             console.log('_flattenReadyItems', _flattenReadyItems);
+            buildTextProcText(_flattenReadyItems);
         }
 
         function getFlattenReadyItems(nodes) {
@@ -818,7 +770,7 @@
                 flattenReadyItem.color = computedNodeStyle.color;
                 flattenReadyItem.fontFamily = computedNodeStyle.fontFamily;
                 flattenReadyItem.fontWeight = computedNodeStyle.fontWeight;
-                flattenReadyItem.textDecoration = computedNodeStyle.textDecoration;
+                flattenReadyItem.textDecorationLine = computedNodeStyle.textDecorationLine;
                 flattenReadyItem.fontVariant = computedNodeStyle.fontVariant;
                 _flattenReadyItems.push(flattenReadyItem);
 
@@ -826,51 +778,195 @@
             return _flattenReadyItems;
         }
 
+        /**
+         *
+         * <tc> Text fill color
+         * <u> Text underline
+         * <..> End of all style data
+         */
+        function buildTextProcText(pFlattenedReadyItems){
+            var textString = '';
+            var styleRun = '';
+            var lastColor = null;
+            var lastDecoration = 'none';
+            var styleRunLength = 0;
+
+            for (var i = 0, iLength = pFlattenedReadyItems.length; i < iLength; i++){
+                _buildTextString(pFlattenedReadyItems[i].text);
+                _buildStyleRun(pFlattenedReadyItems[i], i, iLength);
+
+            }
+
+            function _buildTextString(textItem)
+            {
+                textString += textItem;
+            }
+
+            function _buildStyleRun(pFlattenedItem, pIndex, pILength)
+            {
+                var hasRunChange = false;
+                var thisStyleRun = '';
+                if (pFlattenedItem.color !== lastColor)
+                {
+                    hasRunChange = true;
+                    thisStyleRun += '<tc' + Tool$.RGB2Int(pFlattenedReadyItems[pIndex].color) + '>';
+                    lastColor = pFlattenedItem.color;
+                    console.log('thisStyleRun',thisStyleRun);
+                }
+
+                if (pFlattenedItem.textDecorationLine !== lastDecoration)
+                {
+                    hasRunChange = true;
+                    thisStyleRun += '<u>';
+                    lastDecoration = pFlattenedItem.textDecorationLine;
+                    console.log('thisStyleRun',thisStyleRun);
+                }
+
+
+                if(pIndex === 0)
+                {
+                    styleRun += thisStyleRun;
+                    styleRunLength += pFlattenedItem.text.length;
+                }
+                else if (hasRunChange)
+                {
+                    styleRun += styleRunLength + ' ' + thisStyleRun;
+                    if (pIndex === pILength -1)
+                    {
+                        styleRun += pFlattenedItem.text.length + ' <..>';
+                    }
+                    styleRunLength = pFlattenedItem.text.length;
+                }
+                else
+                {
+                    styleRunLength += pFlattenedItem.text.length;
+                }
+            }
+
+            // console.log('textString',textString);
+            // console.log('styleRun',styleRun);
+            // console.log('textProcText',styleRun + textString);
+            var textProcFinal = renderEngine + boxFormat + '<fi' + FONTS.arial.include + '>' + '<fn' + FONTS.arial.fontid + '>' + styleRun + textString + '\n<EOT>';
+            console.log(textProcFinal);
+        }
+
         //<t>This</t>
         //<span><t>is</t></span>
         //<t>Good</t>
 
+        /**
+         * '1111\n' +
+         '\n' +
+         '670753665268421 300000000000000 0 0 2 2 2 2 1 0\n' +
+         '<fi0*0400*ARIALUNICODEMS\tArialUnicodeMS\tArial Unicode MS\tArial Unicode MS\tArial Unicode MS><fn0*0400*ARIALUNICODEMS><bc0>5 <bc255>8 <bc0>1 <bc167116800>3 <bc00>1 <u>6 <u>6 <..>this was the most simple thing';
 
-        function getTextNodesFromElement(node, isFlattening) {
+         * @param pBassData
+         */
+        function populateHTML(pBassData){
+            bassData = pBassData || bassData;
+            var styleRunData = '<tc0>5 <tc255>8 <tc0>1 <tc16711680>3 <tc0>1 <u>6 <u>6 <..>this was the most simple thing';
+            var textIndex = styleRunData.indexOf('<..>');
+            var text = styleRunData.slice(textIndex + 4);
+            var styleRun = styleRunData.slice(0,textIndex-1);
+            console.log('text', text);
+            console.log('styleRun', styleRun);
+            var soloStyleElements = styleRun.split(' ');
+            console.log('styleElements',styleElements);
+            var lastStyles = {
+              color: 0,
+              underline: false
+            };
 
-            var _nodes = [];
+            var styleElements = [];
 
-            getRecursiveTextNodes(node,isFlattening);
+            for (var i = 0, iLength = soloStyleElements.length; i < iLength; i++)
+            {
+                var styleElement, color, underline;
 
-            return _nodes;
-
-            function getRecursiveTextNodes(node, isFlattening){
-                console.log('getRecursiveTextNodes() -- node START', node);
-
-                if (node.nodeType == Node.TEXT_NODE) {
-                    // check that we are not the first node or the last node and that the node is not empty.
-                    //if (!/^\s*$/.test(node.nodeValue)) {
-                    _nodes.push(node);
-                    console.log('getRecursiveTextNodes() -- node 1', node);
-                    //}
-
-                    // loop through each childNode of the current node looking for more childNodes (and so on...)
-                } else if (node.nodeType === 1 && isFlattening && node.nodeName === 'DIVBR') {
-                    var newTextNode = document.createTextNode('[_RETURN]');
-                    _nodes.push(newTextNode);
-                } else {
-                    console.log('getRecursiveTextNodes() -- node 2', node);
-                    if (node.nodeName === 'DIV' && isFlattening && node.id !== pElementID) {
-                        var newTextNode = document.createTextNode('[_RETURN]');
-                        _nodes.push(newTextNode);
-                    }
-
-                    // nodes = ['<t>this</t>']
-                    // childNotes = ['<span><t>is</t></span>']
-                    for (var i = 0, iLength = node.childNodes.length; i < iLength; i++) {
-                        //if()
-                        getRecursiveTextNodes(node.childNodes[i], isFlattening);
-                    }
+                var styleString = soloStyleElements[i].split('>');
+                console.log('styleElement',styleString);
+                if (styleString[0].slice(1,3) === 'tc')
+                {
+                    color = styleString[0].slice(3);
+                    underline = lastStyles.underline;
+                    lastStyles.color = color;
                 }
+                else if (styleString[0].slice(1,2) === 'u')
+                {
+                    color =  lastStyles.color;
+                    underline = !lastStyles.underline;
+                    lastStyles.underline = underline;
+                }
+
+                styleElement = {
+                    color: parseInt(color),
+                    underline: underline,
+                    length: parseInt(styleString[1])
+                };
+
+                styleElements.push(styleElement);
+
+
+
+
+
+
             }
+
+            console.log('styleElements',styleElements);
+
+            var fragment = new DocumentFragment();
+
+            var countLength = 0;
+
+            for (var i = 0, iLength = styleElements.length; i < iLength; i++)
+            {
+                var span = document.createElement('SPAN');
+                span.innerText = text.slice(countLength,countLength + styleElements[i].length);
+                console.log('text',text);
+                countLength += styleElements[i].length;
+                span.classList.add(getColorClassFromInt(styleElements[i].color));
+                // span.classLis/t.add(getUnderlineClassFromInt(styleElements[i].underline));
+                fragment.append(span);
+            }
+
+            console.log(fragment,fragment);
+
+            while (textProps.editableDivNode.firstChild)
+            {
+                textProps.editableDivNode.removeChild(textProps.editableDivNode.firstChild);
+            }
+            textProps.editableDivNode.append(fragment);
+
 
 
         }
+
+        // functi
+
+        function getColorClassFromInt(colorInt)
+        {
+            var colorClass;
+            if (colorInt === 0)
+            {
+                colorClass = CLASSES.black;
+            }
+            else if (colorInt === 255)
+            {
+                colorClass = CLASSES.blue;
+            }
+            else if(colorInt === 16711680)
+            {
+                colorClass = CLASSES.red;
+            }
+            return colorClass;
+        }
+
+
+
+
+
+
     }
 
     window.textGUI$ = textGUI$;
