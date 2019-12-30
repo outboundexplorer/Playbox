@@ -7,6 +7,8 @@
 
         var textProps = {
             editableDivNode: null,
+            boxWidth: 0,
+            boxHeight: 0,
             isSelecting: false,
             nodesForFormatting: null,
             cursorContainer: null,
@@ -17,10 +19,6 @@
         var TAB = String.fromCharCode(9);
         var RETURN = String.fromCharCode(13);
 
-        var bassData = '1111\n' +
-            '\n' +
-            '670753665268421 300000000000000 0 0 2 2 2 2 1 0\n' +
-            '<fi0*0400*ARIALUNICODEMS' + TAB + 'ArialUnicodeMSArial Unicode MSArial Unicode MSArial Unicode MS><fn0*0400*ARIALUNICODEMS><bc00>5 <bc0255>8 <bc00>1 <bc167116800>3 <bc00>1 <u>6 <u>6 <..>this was the most simple thing';
 
         /**
          * Define the CSS classes used to manage the applied styles
@@ -56,9 +54,36 @@
             }
         };
 
+        /**
+         * Note that for font values we are replacing spaces with underscore
+         * @type {{color: {prop: string}, underline: {prop: string, value: string}, zapfino: {fontid: string, prop: string, factor: number, value: string}, atypewriter: {fontid: string, prop: string, value: string}}}
+         */
+        var STYLES = {
+           underline: {
+               prop: 'text-decoration',
+               value: 'underline'
+           },
+           zapfino: {
+               prop: 'font-family',
+               value: 'Zapfino',
+               fontid: '0*0400*ZAPFINO',
+               factor: 2
+           },
+           atypewriter: {
+               prop: 'font-family',
+               value: 'American_Typewriter',
+               fontid: '0*0400*AMERICANTYPEWRITER'
+           },
+            color: {
+               prop: 'color'
+            }
+        };
+
         var renderEngine = '1111' + RETURN + RETURN;
         var boxFormat = '512473473139117 220048548281196 0 1 2 2 2 2' + RETURN;
-        var renderHeader = '0111' + RETURN + RETURN + '300000000000000 300000000000000 0 0 0 0 0 0 1 0' + RETURN;
+        var renderHeader = '0111' + RETURN + RETURN + '900000000000000 600000000000000 0 0 0 0 0 0 1 0' + RETURN;
+        // var renderHeader = '0111' + RETURN + RETURN + '900000000000000 600000000000000 0 0 0 0 0 0 1 0' + RETURN;
+        // var renderHeader = '0111' + RETURN + RETURN + '300000000000000 300000000000000 0 0 0 0 0 0 1 0' + RETURN;
         // var renderHeader = '0111' + RETURN + RETURN + '300000000000000 300000000000000 0 0 0 0 0 0 1 0' + RETURN+ '<fi' + FONTS.arial.include + '>' + '<fn' + FONTS.arial.fontid + '><ts3200>';
         var renderEnd = RETURN + '<EOT>' + TAB + RETURN;
 
@@ -84,6 +109,7 @@
 
         function initGUI() {
             defineBox();
+            calculateBoxDimensions();
             makeBoxContentEditable();
             registerListeners();
         }
@@ -141,6 +167,18 @@
             console.log(document.querySelector('#' + pElementID));
             textProps.editableDivNode = document.querySelector('#' + pElementID);
         }
+
+        function calculateBoxDimensions(){
+            window.setTimeout(function(){
+                textProps.boxWidth = textProps.editableDivNode.clientWidth;
+                textProps.boxHeight = textProps.editableDivNode.clientHeight;
+                console.log(textProps);
+                renderHeader = '0111' + RETURN + RETURN + (TaopixBigNumber.scaleNumberUp(textProps.boxWidth/72)) + ' ' + (TaopixBigNumber.scaleNumberUp(textProps.boxHeight/72)) + ' ' + '0 0 0 0 0 0 1 0' + RETURN;
+                console.log('renderHeader', renderHeader);
+            },1000);
+        }
+
+        // 600 * 100000000000000 / 72
 
         function makeBoxContentEditable(){
             textProps.editableDivNode.setAttribute('contenteditable',true);
@@ -535,9 +573,11 @@
             if (!ancestors || ancestors.length === 0) {
                 ancestors = [];
             }
+
+            var inlineStyle = getInlineStyleObject(style);
             if (node.parentElement && node.parentElement.id === pElementID) {
                 return ancestors;
-            } else if (node.parentElement && node.parentElement.className && node.parentElement.className.indexOf(style) >= 0) {
+            } else if (node.parentElement && node.parentElement.style[inlineStyle.prop] === inlineStyle.value) {
                 ancestors.push(node.parentElement);
             }
             console.log('ancestors', ancestors);
@@ -547,70 +587,8 @@
 
 
 
-        function getParentTextNodesOutsideSelection(parentTextNodes) {
-            console.log('nodesForFormatting', nodesForFormatting);
-            console.log('parentTextNodes', parentTextNodes);
-            var _parentTextNodesOutsideSelection = [];
-            for (var i = 0, iLength = parentTextNodes.length; i < iLength; i++) {
-                var found = false;
-                for (var j = 0, jLength = nodesForFormatting.length; j < jLength; j++) {
-                    console.log('parentTextNodes.nodeValue', parentTextNodes[i].nodeValue);
-                    console.log('nodesForFormatting.nodeValue', nodesForFormatting[j].nodeValue);
-                    if (parentTextNodes[i] === nodesForFormatting[j]) {
-                        //if( parentTextNodes[i].nodeValue === nodesForFormatting[j].nodeValue){
-                        console.log('found');
-                        found = true;
-                        continue;
-                    }
-                }
-                if (!found) {
-                    _parentTextNodesOutsideSelection.push(parentTextNodes[i]);
-                }
-            }
-            console.log('getParentTextNodesOutSideSelection()', _parentTextNodesOutsideSelection);
-            return _parentTextNodesOutsideSelection;
-        }
 
-        function getParentTypeElements(style, nodes) {
-            console.log('getParentTypeElements() -- style', style);
-            console.log('getParentTypeElements() -- nodes', nodes);
-            var _parentTypeElements = [];
-            for (var i = 0, iLength = nodes.length; i < iLength; i++) {
-                console.log('getParentTypeElements() -- node', nodes[i]);
-                console.log('getParentTypeElements() -- getAncestorByClass(nodes[i],style)', getAncestorsByClass(style, nodes[i]));
-                _parentTypeElements = _parentTypeElements.concat(getAncestorsByClass(style, nodes[i]));
-            }
-            console.log('getParentTypeElements', _parentTypeElements);
-            return _parentTypeElements;
-        }
 
-        /**
-         * We need to keep checking until we reach the top as it is possible that we have
-         * several layers of spans with the same class applied
-         */
-        function getAncestorsByClass(node, style, ancestors) {
-
-            if (!ancestors || ancestors.length === 0) {
-                _ancestors = [];
-            } else {
-                _ancestors = ancestors;
-            }
-
-            console.log('getAncestorsByClass() -- node', node);
-            console.log('getAncestorsByClass() -- style', style);
-            console.log('getAncestorsByClass() -- ancestors', ancestors);
-            console.log('getAncestorsByClass() -- _ancestors', _ancestors);
-
-            if (node.parentElement && node.parentElement.id === pElementID) {
-                return _ancestors;
-            } else if (node.parentElement && node.parentElement.className && node.parentElement.className.indexOf(style) >= 0) {
-                _ancestors.push(node.parentElement);
-                return getAncestorsByClass(style, node.parentElement, _ancestors);
-            }
-
-            return _ancestors;
-
-        }
 
 
         function areAllNodesFormatted(nodes, style) {
@@ -622,13 +600,33 @@
             return true;
         }
 
+        function getInlineStyleObject(style){
+            var inlineStyle = {};
+
+            switch (style){
+                case 'underline':
+                    inlineStyle = {
+                        prop: 'textDecoration',
+                        value: 'underline'
+                    };
+                    break;
+            }
+
+            return inlineStyle;
+        }
+
         function doesNodeHaveAncestorWithFormat(node, style) {
+            console.log('doesNodeHaveAncestorWithFormat() -- node',node);
+            console.log('doesNodeHaveAncestorWithFormat() -- style',style);
+            console.log('doesNodeHaveAncestorWithFormat() -- node.parentElement',node.parentElement);
+            console.log('doesNodeHaveAncestorWithFormat() -- node.parentElement.style',node.parentElement.style);
+            var inlineStyle = getInlineStyleObject(style);
 
             if (node.parentElement && node.parentElement.id === pElementID)
             {
                 return false;
             }
-            else if (node.parentElement.className && node.parentElement.className.indexOf(CLASSES[style]) >= 0)
+            else if (node.parentElement.style[inlineStyle.prop] === inlineStyle.value)
             {
                 return true;
             }
@@ -641,7 +639,7 @@
 
         function removeFormatFromElements(parentElements, style) {
             for (var i = 0, iLength = parentElements.length; i < iLength; i++) {
-                parentElements[i].classList.remove(CLASSES[style]);
+                parentElements[i].style.removeProperty(STYLES[style].prop);
             }
         }
 
@@ -701,7 +699,7 @@
                     continue;
                 }
 
-                var newNode = createFormatWrapper(style);
+                var newNode = createFormatWrapper(nodes[i],style);
                 // forceNormalize();
                 nodes[i].parentNode.insertBefore(newNode, nodes[i]);
                 newNode.appendChild(nodes[i]);
@@ -722,7 +720,7 @@
          * @param style
          * @returns {HTMLElement}
          */
-        function createFormatWrapper(style) {
+        function createFormatWrapper(node,style) {
 
             var wrapperTag = document.createElement('SPAN');
 
@@ -735,19 +733,17 @@
             }
             else if (style === 'red')
             {
-                wrapperTag.classList.add(CLASSES[style]);
+                wrapperTag = applyComplementStyles(wrapperTag,node,style);
+                wrapperTag.style.color = 'red';
             }
             else if (style === 'blue')
             {
-                wrapperTag.classList.add(CLASSES[style]);
+                wrapperTag = applyComplementStyles(wrapperTag,node,style);
+                wrapperTag.style.color = 'blue';
             }
             else if (style === 'underline')
             {
-                wrapperTag.classList.add(CLASSES[style]);
-            }
-            else if (style === 'noUnderline')
-            {
-                wrapperTag.classList.add(CLASSES[style]);
+                wrapperTag.style.textDecoration = 'underline';
             }
             else if (style === 'line-through')
             {
@@ -765,15 +761,43 @@
                 wrapperTag.classList.add('font');
             }
             else if (style === 'zapfino') {
-                wrapperTag.classList.add(CLASSES[style]);
+                wrapperTag = applyComplementStyles(wrapperTag,node,style);
+                wrapperTag.style.fontFamily = STYLES.zapfino.value;
             }
             else if (style === 'atypewriter') {
-                wrapperTag.classList.add(CLASSES[style]);
+                wrapperTag.style.fontFamily = STYLES.atypewriter.value;
+
             }
 
 
             //span.setAttribute("data-id", noteID);
             console.log('wrapperTag', wrapperTag);
+            return wrapperTag;
+        }
+
+        function applyComplementStyles(wrapperTag, node, style){
+            switch (style){
+                case 'red':
+                    var parentTextDecoration = window.getComputedStyle(node.parentElement).textDecoration;
+                    if (parentTextDecoration && parentTextDecoration.indexOf('underline') >= 0)
+                    {
+                        wrapperTag.style.setProperty('text-decoration','underline red');
+                    }
+                    break;
+                case 'blue':
+                    var parentTextDecoration = window.getComputedStyle(node.parentElement).textDecoration;
+                    if (parentTextDecoration && parentTextDecoration.indexOf('underline') >= 0)
+                    {
+                        wrapperTag.style.setProperty('text-decoration','underline blue');
+                    }
+                    break;
+                case 'zapfino':
+                    var parentFontSize = parseInt(window.getComputedStyle(node.parentElement).fontSize);
+                    wrapperTag.style.setProperty('font-size',(parentFontSize * STYLES.zapfino.factor) + 'px');
+                    break;
+
+            }
+
             return wrapperTag;
         }
 
@@ -909,7 +933,7 @@
               //  '\n' +
                // '300000000000000 300000000000000 0 0 0 0 0 0 1 0' + RETURN+ '<fi' + FONTS.arial.include + '>' + '<fn' + FONTS.arial.fontid + '><ts3200>' + styleRun + textString + RETURN + '<EOT>' + TAB + RETURN;
 
-            var textProcFinal = renderHeader + '<fi' + FONTS.atypewriter.include + '>' + '<fi' + FONTS.zapfino.include + '><ts3200>' + styleRun + textString + renderEnd;
+            var textProcFinal = renderHeader + '<fi' + FONTS.atypewriter.include + '>' + '<fi' + FONTS.zapfino.include + '><ts3600>' + styleRun + textString + renderEnd;
             // var textProcFinal = renderHeader + '<fi' + FONTS.arial.include + '>' + '<fn' + FONTS.arial.fontid + '><ts3200>' + styleRun + textString + renderEnd;
             console.log('textProcFinal',textProcFinal);
             textProps.styleRun = textProcFinal;
@@ -918,6 +942,7 @@
         }
 
         function getFontID(fontFamily){
+
             var fontID;
             switch (fontFamily){
                 case 'American_Typewriter':
@@ -1099,44 +1124,27 @@
 
         function applyColorClassFromInt(span,colorInt)
         {
-            var colorClass;
-            if (colorInt === 0)
-            {
-                colorClass = CLASSES.black;
-            }
-            else if (colorInt === 255)
-            {
-                colorClass = CLASSES.blue;
-            }
-            else if(colorInt === 16711680)
-            {
-                colorClass = CLASSES.red;
-            }
+            var webRGB = Tool$.Int2webRGB(colorInt);
+            applyInlineStyle(span,STYLES.color.prop,webRGB);
+        }
 
-            span.classList.add(colorClass);
+        function applyInlineStyle(element,property,value){
+            element.style.setProperty(property,value);
         }
 
         function applyUnderlineClass(span,pTruthy){
-            var underlineClass = null;
             if (pTruthy === true)
             {
-                underlineClass = CLASSES.underline;
-                span.classList.add(underlineClass);
+                applyInlineStyle(span,STYLES.underline.prop,'underline');
             }
         }
 
-        function applyFontClass(span, pFont){
-            var fontClass = null;
-            switch (pFont){
-                case FONTS.atypewriter.fontid:
-                    fontClass = CLASSES.atypewriter;
-                    break;
-                case FONTS.zapfino.fontid:
-                    fontClass = CLASSES.zapfino;
-                    break;
-            }
-            span.classList.add(fontClass);
+        function applyFontClass(span, pFontID){
+            console.log('applyFontClass, pFontID',pFontID);
+            var stylesKey = Tool$.getKeyOfPropertyValue(STYLES,'fontid',pFontID);
+            console.log('stylesKey',stylesKey);
 
+            applyInlineStyle(span,STYLES[stylesKey].prop,STYLES[stylesKey].value);
         }
 
         function appendStyleRunData(){

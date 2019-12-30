@@ -5,7 +5,9 @@
 
         return {
             getUniqueArray: getUniqueArray,
-            RGB2Int: RGB2Int
+            getKeyOfPropertyValue: getKeyOfPropertyValue,
+            webRGB2Int: webRGB2Int,
+            Int2webRGB: Int2webRGB
         };
 
         function getUniqueArray(pBloatedArray){
@@ -15,13 +17,45 @@
             return _uniqueArray;
         }
 
+
+        var STYLES = {
+            underline: {
+                prop: 'text-decoration',
+                value: 'underline'
+            },
+            zapfino: {
+                prop: 'font-family',
+                value: 'Zapfino',
+                fontid: '0*0400*ZAPFINO',
+                factor: 2
+            },
+            atypewriter: {
+                prop: 'font-family',
+                value: 'American Typewriter',
+                fontid: '0*0400*AMERICANTYPEWRITER'
+            },
+            color: {
+                prop: 'color'
+            }
+        };
+
+        function getKeyOfPropertyValue(pObject,property,value){
+            var outKeys = Object.keys(pObject);
+            for (var i = 0, iLength = outKeys.length; i < iLength; i++){
+                if (pObject[outKeys[i]].hasOwnProperty(property) && pObject[outKeys[i]][property] === value){
+                    return outKeys[i];
+                }
+            }
+            return false;
+        }
+
         /** Convert a CSS RGB Color to integer representation
          *
-         * @param CSS RGBColor (eg. rgb(0,0,0));
+         * @param CSS webRGBColor (eg. rgb(0,0,0));
          * red = 15417909
          * @return Int
          */
-        function RGB2Int(pRGBColor)
+        function webRGB2Int(pRGBColor)
         {
             var rgbColors = pRGBColor.match(/\d+(?=,|\))/g);
             console.log('rgbColors',rgbColors);
@@ -32,35 +66,31 @@
 
 
         /**
-         * Int2RGB
+         * Int2webRGB
          * Convert an integer representation of a colour into an RGB colour
          *
          * @param pIntColour Integer (eg. 13151557)
          *
-         * @return Object(RGBColour) (eg. {red:200, green:173, blue:69})
+         * @return {string} (eg. rgb(0,255,0) )
          */
-        function Int2RGB(pIntColour)
+        function Int2webRGB(pIntColour)
         {
-            var r; // 22
-            var g; // 0
-            var b; // 0
+            var rValue;
+            var gValue;
+            var bValue;
 
             // calculate red
-            r = Math.floor(pIntColour / 65536); // 15417909 / 65536 = 235
-            pIntColour -= (r * 65536); //
+            rValue = Math.floor(pIntColour / 65536);
+            pIntColour -= (rValue * 65536);
 
             // calculate green
-            g = Math.floor(pIntColour / 256);
-            pIntColour -= (g * 256);
+            gValue = Math.floor(pIntColour / 256);
+            pIntColour -= (gValue * 256);
 
             // calculate blue
-            b = pIntColour;
+            bValue = pIntColour;
 
-            return {
-                red: r,
-                green: g,
-                blue: b
-            };
+            return 'rgb('+rValue+','+gValue+','+bValue+')';
         }
     }();
 

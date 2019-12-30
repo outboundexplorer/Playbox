@@ -5,8 +5,9 @@
     src: url('https://cdnjs.cloudflare.com/ajax/libs/topcoat/0.8.0/font/SourceCodePro-Light.otf') format('opentype');
 }
 
+/* Note that we are replacing spaces with underscore */
 @font-face {
-    font-family: 'American Typewriter';
+    font-family: 'American_Typewriter';
     src: url('assets/American Typewriter Regular/American Typewriter Regular.ttf') format('truetype');
 }
 
@@ -68,81 +69,3 @@ html {
 
 }
 
-.leftAlign {
-    text-align: left;
-}
-
-
-.centreAlign {
-    text-align: center;
-}
-
-.rightAlign {
-    text-align: right;
-}
-
-.bolded {
-    color: red;
-    font-weight: 600;
-}
-
-.font {
-    font-family: 'Indie Flower', cursive;
-}
-
-.bold {
-    font-weight: 600;
-
-}
-
-.tgui-red {
-    color: red;
-}
-
-.tgui-y-underline .tgui-red {
-    text-decoration: underline red solid;
-}
-
-.line-through .tgui-red {
-    text-decoration: line-through red solid;
-}
-
-.tgui-blue {
-    color: blue;
-}
-
-.tgui-y-underline .tgui-blue {
-    text-decoration: underline blue solid;
-}
-
-.line-through .tgui-blue {
-    text-decoration: line-through blue solid;
-}
-
-.tgui-y-underline {
-    text-decoration: underline;
-}
-
-.tgui-n-underline {
-    text-decoration: none;
-}
-
-.line-through {
-    text-decoration: line-through;
-}
-
-.small-font {
-    font-size: 16px;
-}
-
-.large-font {
-    font-size: 48px;
-}
-
-.tgui-zapfino {
-    font-family: 'Zapfino';
-}
-
-.tgui-atypewriter {
-    font-family: 'American_Typewriter';
-}

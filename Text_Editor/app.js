@@ -4,6 +4,7 @@ var nodesForFormatting;
 var fontUpright = false;
 var cursorContainer = null;
 var isSelecting = false;
+var styleRunData = null;
 
 var buttonNodes;
 
@@ -150,6 +151,12 @@ function handleActionButtonClick(e) {
         case 'directionToggle8':
             textGUI.applyDecoration('underline');
             break;
+        case 'font--zapfino':
+            textGUI.applyFont('zapfino');
+            break;
+        case 'font--atypewriter':
+            textGUI.applyFont('atypewriter');
+            break;
         case 'line-through':
             textGUI.applyDecoration('line-through');
             break;
@@ -164,13 +171,32 @@ function handleActionButtonClick(e) {
             break;
         case 'directionToggle10':
             textGUI.generateFlattenedDiv();
+            textGUI.appendStyleRunData();
             break;
         case 'directionToggle11':
             textGUI.populateHTML();
             break;
+        case 'downloadFile':
+            textGUI.handleDownloadFileButton();
+            break;
+        case 'clearEditor':
+            textGUI.clearEditor();
+            break;
 
 
     }
+
+
+    function showDemo(){
+        var bassData = document.querySelector('#bassData').value;
+        bassTest.showDemo(bassData);
+    }
+
+
+
+
+
+
 }
 
 

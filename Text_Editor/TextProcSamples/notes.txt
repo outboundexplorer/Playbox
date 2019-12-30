@@ -1,0 +1,9 @@
+/opt/taopix/textproc/textproc -cache /opt/taopix/taopixonline/data/server_data/fontcache/ -input /opt/taopix/taopixonline/data/temp/input18.txt -result /opt/taopix/taopixonline/data/temp/result18.txt
+
+/opt/taopix/textproc/textproc -cache /opt/taopix/taopixonline/data/server_data/fontcache/ -input /opt/taopix/taopixonline/data/test_data/input18.txt -result /opt/taopix/taopixonline/data/test_data/result19.txt
+
+
+
+sudo cp /opt/taopix/taopixonline/data/test_data/input18.txt /opt/taopix/taopixonline/data/temp/
+
+

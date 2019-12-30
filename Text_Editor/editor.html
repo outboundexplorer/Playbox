@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <title>Editor</title>
     <script type="text/javascript" src="Tool$.js"></script>
+    <script type="text/javascript" src="bassTest.js"></script>
     <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="textEditor.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <script type="text/javascript" src="textEditor2.js"></script>
+    <script type="text/javascript" src="taopixBigNumber.js"></script>
+    <link rel="stylesheet" href="styles2.css">
 </head>
 <body>
-    <div id="tgui-box" style="text-align: left;">
+    <div id="tgui-box" style="text-align: left;"></div>
+    <div id="tgui-box--marker"></div>
 
-
-    </div>
     <div class="preLoadFontsDiv">
         Here
     </div>
@@ -80,8 +81,11 @@
         <button class="actionButton" id="small-font">
             Small Font
         </button>
-        <button class="actionButton" id="directionToggle9">
-            Change Font
+        <button class="actionButton" id="font--zapfino">
+            FONT: Zapfino
+        </button>
+        <button class="actionButton" id="font--atypewriter">
+            FONT: American Typewriter
         </button>
 
     </div>
@@ -91,11 +95,20 @@
         <button class="actionButton" id="directionToggle10">
             Generate Flattened Div
         </button>
+        <button class="actionButton" id="clearEditor">
+            Clear Editor
+        </button>
         <button class="actionButton" id="directionToggle11">
             Populate HTML
         </button>
 
     </div>
+    <div id="styleRunBox">
+        <p id="styleRunData"></p>
+        <button class="actionButton" id="downloadFile">Download File</button>
+<!--        <a id="downloadLink" download="input.txt" href="">Download File</a>-->
+    </div>
+    <canvas id="demoCanvas"></canvas>
 
 
 </body>
