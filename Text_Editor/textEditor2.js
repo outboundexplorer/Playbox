@@ -170,10 +170,10 @@
 
         function calculateBoxDimensions(){
             window.setTimeout(function(){
-                textProps.boxWidth = textProps.editableDivNode.clientWidth;
-                textProps.boxHeight = textProps.editableDivNode.clientHeight;
+                textProps.boxWidth = textProps.editableDivNode.clientWidth/4;
+                textProps.boxHeight = textProps.editableDivNode.clientHeight/4;
                 console.log(textProps);
-                renderHeader = '0111' + RETURN + RETURN + (TaopixBigNumber.scaleNumberUp(textProps.boxWidth/72)) + ' ' + (TaopixBigNumber.scaleNumberUp(textProps.boxHeight/72)) + ' ' + '0 0 0 0 0 0 1 0' + RETURN;
+                renderHeader = '0111' + RETURN + RETURN + Math.round((TaopixBigNumber.scaleNumberUp(textProps.boxWidth/72))) + ' ' + Math.round((TaopixBigNumber.scaleNumberUp(textProps.boxHeight/72))) + ' ' + '0 0 0 0 0 0 1 0' + RETURN;
                 console.log('renderHeader', renderHeader);
             },1000);
         }
@@ -318,7 +318,8 @@
                 } else if (node.nodeType == Node.TEXT_NODE) {
 
                     // check that we are not the first node or the last node and that the node is not empty.
-                    if (pastStartNode && !reachedEndNode && !/^\s*$/.test(node.nodeValue)) {
+                    if (pastStartNode && !reachedEndNode) {
+                    // if (pastStartNode && !reachedEndNode && !/^\s*$/.test(node.nodeValue)) {
                         textNodes.push(node);
                     }
 
@@ -831,10 +832,17 @@
 
                 var computedNodeStyle = window.getComputedStyle(nodes[i].parentElement);
                 console.log('computedNodeStyle', computedNodeStyle);
+
+                /**
+                 * letter-spacing: 20px the amount of pixels between chars, default normal
+                 * line-height: 1.2, 1.5 the line between the lines
+                 * @type {string | any}
+                 */
                 flattenReadyItem.text = nodes[i].nodeValue;
                 flattenReadyItem.length = nodes[i].length;
                 flattenReadyItem.color = computedNodeStyle.color;
                 flattenReadyItem.fontFamily = computedNodeStyle.fontFamily;
+                flattenReadyItem.fontSize = computedNodeStyle.fontSize;
                 flattenReadyItem.fontWeight = computedNodeStyle.fontWeight;
                 flattenReadyItem.textDecorationLine = computedNodeStyle.textDecorationLine;
                 flattenReadyItem.fontVariant = computedNodeStyle.fontVariant;
@@ -855,7 +863,8 @@
             var styleRun = '';
             var lastColor = null;
             var lastStyle = {
-              font: null
+              font: null,
+              size: null
             };
             var lastDecoration = 'none';
             var styleRunLength = 0;
@@ -876,6 +885,16 @@
                 console.log('pFlattenedItem',pFlattenedItem);
                 var hasRunChange = false;
                 var thisStyleRun = '';
+
+                if (pFlattenedItem.fontSize !== lastStyle.size)
+                {
+                    hasRunChange = true;
+                    thisStyleRun += '<ts' + getFontSize(pFlattenedItem.fontSize) + '>';
+                    lastStyle.size = pFlattenedItem.fontSize;
+                    console.log('thisStyleRun',thisStyleRun);
+                }
+
+
                 if (pFlattenedItem.color !== lastColor)
                 {
                     hasRunChange = true;
@@ -933,7 +952,7 @@
               //  '\n' +
                // '300000000000000 300000000000000 0 0 0 0 0 0 1 0' + RETURN+ '<fi' + FONTS.arial.include + '>' + '<fn' + FONTS.arial.fontid + '><ts3200>' + styleRun + textString + RETURN + '<EOT>' + TAB + RETURN;
 
-            var textProcFinal = renderHeader + '<fi' + FONTS.atypewriter.include + '>' + '<fi' + FONTS.zapfino.include + '><ts3600>' + styleRun + textString + renderEnd;
+            var textProcFinal = renderHeader + '<fi' + FONTS.arial.include + '>' + '<fi' + FONTS.atypewriter.include + '>' + '<fi' + FONTS.zapfino.include + '><ts900>' + styleRun + textString + renderEnd;
             // var textProcFinal = renderHeader + '<fi' + FONTS.arial.include + '>' + '<fn' + FONTS.arial.fontid + '><ts3200>' + styleRun + textString + renderEnd;
             console.log('textProcFinal',textProcFinal);
             textProps.styleRun = textProcFinal;
@@ -945,6 +964,9 @@
 
             var fontID;
             switch (fontFamily){
+                case 'Arial':
+                    fontID = FONTS.arial.fontid;
+                    break;
                 case 'American_Typewriter':
                     fontID = FONTS.atypewriter.fontid;
                     break;
@@ -953,6 +975,10 @@
                     break;
             }
             return fontID;
+        }
+
+        function getFontSize(fontSize){
+            return fontSize.slice(-2)*100
         }
 
         function handleDownloadFileButton(){

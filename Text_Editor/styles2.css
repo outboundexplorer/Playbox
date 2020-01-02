@@ -15,6 +15,11 @@
     font-family: 'Zapfino';
     src: url('assets/Zapfino/zapfinoextraltpro/ZapfinoExtraLTPro.otf') format('opentype');
 }
+
+@font-face {
+    font-family: 'Arial';
+    src: url('assets/Arial.ttf') format('truetype');
+}
 html {
 
     background-color:white
@@ -23,11 +28,12 @@ html {
 #tgui-box{
     writing-mode: horizontal-tb;
     width: 600px;
-    height: 200px;
+    height: 320px;
     background-color: ghostwhite;
     font-size: 36px;
+    font-family: 'Arial';
     /*font-family: 'Zapfino';*/
-    font-family: 'American_Typewriter';
+    /*font-family: 'American_Typewriter';*/
     /*font-family: 'SourceCodePro-Light';*/
     opacity: 0.9;
 }

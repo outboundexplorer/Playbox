@@ -1,0 +1,19 @@
+this was the way that we should think about this and see whether there are other ways around this as not so sure
+
+
+wysiwyg
+box width = 600px
+box height = 320px
+font-size = 36px
+
+
+
+
+canvas
+box width = 150px  208333333333333
+box left = 117252864126581
+boxlinex2 = 117252864126581 + 208333333333333 = 325586197459914
+
+box height = 80px  111111111111111
+box top = 184544990082346 + 111111111111111 = 295656101193457
+font-size = 9px
